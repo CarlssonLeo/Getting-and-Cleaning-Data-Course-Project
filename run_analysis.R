@@ -1,7 +1,13 @@
 # Neccecary packages
 library(tidyverse)
 
-# Appropriately labels the data set with descriptive variable names.
+# Appropriately labels the data set with descriptive variable names
+# This uses the variable names as described in features.txt in the data folder,
+# which admitedly may not be the easiest to follow at first. However,
+# this data is assumed to be cleaned for someone with atleast some insight in 
+# the study, so the variable names are NOT changed in any way. This
+# is to make reproducability easier, and for different reserachers using the same
+# data to be able to understandn each others data in the same way.
 names <- read.table("./Data/UCI HAR Dataset/features.txt", sep = " ")
 names <- as.character(names$V2) 
 
@@ -11,17 +17,19 @@ names <- as.character(names$V2)
 subject_test <- read.table("./Data/UCI HAR Dataset/test/subject_test.txt")
 subject_test <- rename(subject_test, subject = V1)
 
-# Read X
+# Read X, using the names variable for column names
 X_test <- read.table("./Data/UCI HAR Dataset/test/X_test.txt", col.names = names)
 
 # Read y
 # Uses descriptive activity names to name the activities in the data set
 y_test <- read.table("./Data/UCI HAR Dataset/test/y_test.txt")
 y_test <- rename(y_test, activity = V1)
+#set factor names
 y_test$activity <- factor(y_test$activity,
                         levels = c(1,2,3,4,5,6),
                         labels = c("Walking", "Walking_Upstairs", "Walking_Downstairs", "Sitting", "Standing", "Laying"))
 
+#merge into a combined test-dataframe
 test <- cbind(subject_test, y_test, X_test)
 
 # Read Train --------------------------------------------------------------
@@ -30,6 +38,7 @@ test <- cbind(subject_test, y_test, X_test)
 subject_train <- read.table("./Data/UCI HAR Dataset/train/subject_train.txt")
 subject_train <- rename(subject_train, subject = V1)
 
+#using the names variable for column names
 X_train <- read.table("./Data/UCI HAR Dataset/train/X_train.txt", col.names = names)
 
 # Uses descriptive activity names to name the activities in the data set
@@ -69,4 +78,5 @@ mean_set<- merge_set %>%
         summarise_all(funs(mean))
 write.table(mean_set, "./mean_set.txt", row.names = FALSE)
 
+#if the file is run as a whole, print the mean_set
 mean_set
